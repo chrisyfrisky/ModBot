@@ -20,7 +20,11 @@ with open('config/config.json', 'r') as file:
 async def on_ready():
     print('Readying...')
     await bot.load_extension('cogs.test')
+
     bot.tree.copy_global_to(guild=test_guild)
+    synced_commands = await bot.tree.sync(guild=test_guild)
+    print(f'Successfully synced {len(synced_commands)} command(s).')
+
     print('Ready!')
 
 if __name__ == '__main__':
