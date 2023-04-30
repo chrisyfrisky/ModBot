@@ -19,7 +19,9 @@ with open('config/config.json', 'r') as file:
 @bot.event
 async def on_ready():
     print('Readying...')
+
     await bot.load_extension('cogs.test')
+    await bot.load_extension('cogs.info')
 
     bot.tree.copy_global_to(guild=test_guild)
     synced_commands = await bot.tree.sync(guild=test_guild)
