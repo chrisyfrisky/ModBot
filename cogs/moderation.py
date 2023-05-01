@@ -60,5 +60,54 @@ class ModerationCog(commands.Cog):
                             app_commands.AppCommandError):
         await interaction.response.send_message(error)
 
+    @app_commands.command()
+    @app_commands.guild_only()
+    @app_commands.checks.has_permissions(ban_members=True)
+    @app_commands.checks.bot_has_permissions(ban_members=True)
+    async def unban(self, interaction: discord.Interaction, user: str, reason:
+                    str | None = None) -> None:
+        """Unban a user by ID
+
+        Parameters
+        ----------
+        id: str
+            the user to unban (handled as a string due to Discord limitation)
+        reason: str, optional
+            the reason for the unban
+        """
+        try:
+            user_id = int(user)
+        except ValueError:
+            await interaction.response.send_message('Invalid integer provided.')
+            return
+
+        if user_id <= 0:
+            await interaction.response.send_message('ID must be positive.')
+            return
+
+        if reason is None:
+            reason = ''
+        reason = f'[Unban by {interaction.user}] ' + reason
+
+        try:
+            await interaction.guild.unban(discord.Object(user_id),
+                                          reason=reason)
+        except discord.NotFound:
+            await interaction.response.send_message(f'User ID {user} does not '
+                                                    'exist.')
+        except discord.Forbidden:
+            await interaction.response.send_message("I don't have permissions "
+                                                    'to ban people.')
+        except discord.HTTPException:
+            await interaction.response.send_message('Unable to unban.')
+        else:
+            await interaction.response.send_message('Successfully unbanned '
+                                                    f'user ID {user}.')
+
+    @unban.error
+    async def on_unban_error(self, interaction: discord.Interaction, error:
+                             app_commands.AppCommandError):
+        await interaction.response.send_message(error)
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(ModerationCog(bot))
