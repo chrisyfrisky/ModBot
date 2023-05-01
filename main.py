@@ -22,6 +22,7 @@ async def on_ready():
 
     await bot.load_extension('cogs.test')
     await bot.load_extension('cogs.info')
+    await bot.load_extension('cogs.moderation')
 
     bot.tree.copy_global_to(guild=test_guild)
     synced_commands = await bot.tree.sync(guild=test_guild)
