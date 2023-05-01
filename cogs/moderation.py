@@ -37,8 +37,9 @@ class ModerationCog(commands.Cog):
             await interaction.response.send_message('ID must be positive.')
             return
 
-        if reason:
-            reason = f'[Ban by {interaction.user}] ' + reason
+        if reason is None:
+            reason = ''
+        reason = f'[Ban by {interaction.user}] ' + reason
 
         try:
             await interaction.guild.ban(discord.Object(user_id), reason=reason)
